@@ -1,6 +1,17 @@
 encryptionsalt: v1:yBH+HwSX4SQ=:v1:NoKSkzZ+mIPeIJBK:9fctYQiovr1TuBqUJ8hTPJQUVcjFsg==
 config:
-  aws:accessKey: AKIAU64AUJZNLMGR357O
-  aws:region: us-east-2
-  aws:secretKey:
-    secure: v1:+wLIolWRiakjJvoC:g48B95V3/+uvQ5Z85uubEkwEyz2hqHeKe82kkBSSjf28+mRuE3AjCHn31gitJpzE+1VBHqpYmvM=
+  config:
+
+  aws:region: us-east-1
+  aws:profile: manishk-dev
+  cidrBlock: 10.25.0.0/16
+
+  publicCidrBlock: 0.0.0.0/0
+
+  tags:
+
+    {Name : Created from Script}
+  # aws:accessKey: AKIAU64AUJZNLMGR357O
+  # aws:region: us-east-2
+  # aws:secretKey:
+  #   secure: v1:+wLIolWRiakjJvoC:g48B95V3/+uvQ5Z85uubEkwEyz2hqHeKe82kkBSSjf28+mRuE3AjCHn31gitJpzE+1VBHqpYmvM=

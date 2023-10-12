@@ -1,89 +1,221 @@
-"use strict";
-const pulumi = require("@pulumi/pulumi");
-const aws = require("@pulumi/aws");
+const pulumi = require('@pulumi/pulumi');
 
-// Create a new VPC
-const vpc = new aws.ec2.Vpc("my-vpc", {
-    cidrBlock: "10.0.0.0/16",
-    tags: {
-        Name: "MyVPC",
-    },
-});
+const aws = require('@pulumi/aws');
 
-// Create public and private subnets in different availability zones
-const availabilityZones = ["us-east-2a", "us-east-2b", "us-east-2c"];
+const ip = require("ip");
 
-const publicSubnets = [];
-const privateSubnets = [];
+const { Address4 } = require('ip-address');
 
-for (let i = 0; i < availabilityZones.length; i++) {
-    const publicSubnet = new aws.ec2.Subnet(`public-subnet-${i}`, {
-        cidrBlock: `10.0.${i}.0/24`,
-        availabilityZone: availabilityZones[i],
+ 
+
+const config = new pulumi.Config();
+
+ 
+
+ 
+
+ 
+
+const awsRegion = config.get('aws-region');
+
+var vpcCIDR = config.require('cidrBlock');
+
+const publicCidrBlock = config.require('publicCidrBlock');
+
+const tags = config.getObject('tags');
+
+ 
+
+//aws.config.region = awsRegion;
+
+ 
+
+//aws:profile:
+
+ 
+
+console.log(awsRegion,"this is my configured region");
+
+ 
+
+aws.getAvailabilityZones({awsRegion}).then(availableZones => {
+
+    const availabilityZones = availableZones.names.slice(0,3);
+
+    const vpc = new aws.ec2.Vpc('my-vpc', {
+
+        cidrBlock: vpcCIDR,
+
+        enableDnsSupport: true,
+
+        enableDnsHostnames: true,
+
+        tags : {
+
+            "Name" : "MyVPC"
+
+        }
+
+    });
+
+    
+
+    const internetGw = new aws.ec2.InternetGateway("internetGw", {
+
         vpcId: vpc.id,
-        mapPublicIpOnLaunch: true,
+
         tags: {
-            Name: `PublicSubnet-${i}`,
+
+            Name: "MyGateway",
+
         },
+
     });
 
-    publicSubnets.push(publicSubnet.id);
+    
 
-    const privateSubnet = new aws.ec2.Subnet(`private-subnet-${i}`, {
-        cidrBlock: `10.0.${i + 3}.0/24`,
-        availabilityZone: availabilityZones[i],
+    
+
+    const publicRouteTable = new aws.ec2.RouteTable('publicRouteTable', {
+
         vpcId: vpc.id,
+
+        routes: [
+
+            {
+
+                cidrBlock: publicCidrBlock,
+
+                gatewayId: internetGw.id,
+
+            }],
+
         tags: {
-            Name: `PrivateSubnet-${i}`,
+
+            "Name" : "MyPublicRouteTable"
+
         },
+
+      });
+
+    
+
+    const privateRouteTable = new aws.ec2.RouteTable('privateRouteTable', {
+
+        vpcId: vpc.id, // Replace with your VPC ID
+
+        tags: {
+
+            "Name" : "MyPrivateRouteTable"
+
+        },
+
+      });
+
+    
+
+    
+
+    console.log(availabilityZones);
+
+    
+
+    var i=1;
+
+    const publicSubnets = [];
+
+    const privateSubnets = [];
+
+    
+
+    availabilityZones.forEach((az, index) => {
+
+        
+
+        const thirdOctet = index + 1;
+
+ 
+
+        const publicSubnetCIDR = `${vpcCIDR.split('.')[0]}.${vpcCIDR.split('.')[1]}.${thirdOctet}.0/24`;
+
+        const privateSubnetCIDR = `${vpcCIDR.split('.')[0]}.${vpcCIDR.split('.')[1]}.${(parseInt(thirdOctet) * 10)}.0/24`;
+
+ 
+
+        console.log(publicSubnetCIDR, privateSubnetCIDR)
+
+ 
+
+ 
+
+        const publicSubnet = new aws.ec2.Subnet(`public-subnet-${az}`, {
+
+            vpcId: vpc.id,
+
+            cidrBlock: publicSubnetCIDR,
+
+            availabilityZone: az,
+
+            mapPublicIpOnLaunch: true,
+
+            tags: {
+
+                "Name" : `publicSubnet-${i}`
+
+            },
+
+        });
+
+    
+
+        const publicRouteTableAssociation = new aws.ec2.RouteTableAssociation(`publicRouteTableAssociation-${az}`, {
+
+            subnetId: publicSubnet.id,
+
+            routeTableId: publicRouteTable.id,
+
+        });
+
+ 
+
+        const privateSubnet = new aws.ec2.Subnet(`private-subnet-${az}`, {
+
+            vpcId: vpc.id,
+
+            cidrBlock: privateSubnetCIDR,
+
+            availabilityZone: az,
+
+            tags: {
+
+                "Name" : `privateSubnet-${i}`
+
+            },
+
+        });
+
+    
+
+        const privateRouteTableAssociation = new aws.ec2.RouteTableAssociation(`privateRouteTableAssociation-${az}`, {
+
+            subnetId: privateSubnet.id,
+
+            routeTableId: privateRouteTable.id,
+
+        });
+
+ 
+
+        publicSubnets.push(publicSubnetCIDR);
+
+        privateSubnets.push(privateSubnetCIDR);
+
+        i=i+1;
+
     });
 
-    privateSubnets.push(privateSubnet.id);
-}
+ 
 
-// Create an Internet Gateway and attach it to the VPC
-const internetGateway = new aws.ec2.InternetGateway("internet-gateway", {
-    vpcId: vpc.id,
-    tags: {
-        Name: "MyInternetGateway",
-    },
+    console.log(publicSubnets, privateSubnets)
+
 });
-
-// Create a public route table and associate it with the public subnets
-const publicRouteTable = new aws.ec2.RouteTable("public-route-table", {
-    vpcId: vpc.id,
-    tags: {
-        Name: "PublicRouteTable",
-    },
-    routes: [{
-        cidrBlock: "0.0.0.0/0",
-        gatewayId: internetGateway.id,
-    }],
-});
-
-for (let i = 0; i < publicSubnets.length; i++) {
-    const subnetAssociation = new aws.ec2.RouteTableAssociation(`public-subnet-association-${i}`, {
-        routeTableId: publicRouteTable.id,
-        subnetId: publicSubnets[i],
-    });
-}
-
-// Create a private route table and associate it with the private subnets
-const privateRouteTable = new aws.ec2.RouteTable("private-route-table", {
-    vpcId: vpc.id,
-    tags: {
-        Name: "PrivateRouteTable",
-    },
-});
-
-for (let i = 0; i < privateSubnets.length; i++) {
-    const subnetAssociation = new aws.ec2.RouteTableAssociation(`private-subnet-association-${i}`, {
-        routeTableId: privateRouteTable.id,
-        subnetId: privateSubnets[i],
-    });
-}
-
-// Export the VPC ID and the IDs of public and private route tables
-exports.vpcId = vpc.id;
-exports.publicRouteTableId = publicRouteTable.id;
-exports.privateRouteTableId = privateRouteTable.id;
