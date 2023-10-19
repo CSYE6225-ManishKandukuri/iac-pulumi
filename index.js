@@ -10,11 +10,7 @@ const { Address4 } = require('ip-address');
 
 const config = new pulumi.Config();
 
- 
 
- 
-
- 
 
 const awsRegion = config.get('aws-region');
 
@@ -23,7 +19,24 @@ var vpcCIDR = config.require('cidrBlock');
 const publicCidrBlock = config.require('publicCidrBlock');
 
 const tags = config.getObject('tags');
+const keypair= config.require('keyPairName');
+const launchAMI = config.require('launchAMIID');
 
+const debianAmi = aws.ec2.getAmi({
+    mostRecent: true,
+    filters: [
+        {
+            name: "name",
+            values: ["test123-*"],
+        },
+        {
+            name: "virtualization-type",
+            values: ["hvm"],
+        },
+    ],
+    owners: ["341182795354"],
+});
+//10.25.0.0/16
  
 
 //aws.config.region = awsRegion;
@@ -204,17 +217,87 @@ aws.getAvailabilityZones({awsRegion}).then(availableZones => {
 
         });
 
- 
+        // const ec2SecurityGroup = new aws.ec2.SecurityGroup("my-ec2-security-group", {
+        //     vpcId: vpc.id, // Use the VPC created earlier
+        //     // Configure security group rules for ports 22, 80, 443, and your application port
+        //     ingress: [
+        //         {
+        //             fromPort: 22,
+        //             toPort: 22,
+        //             protocol: "tcp",
+        //             cidrBlocks: ["0.0.0.0/0"],
+        //         },
+        //         {
+        //             fromPort: 80,
+        //             toPort: 80,
+        //             protocol: "tcp",
+        //             cidrBlocks: ["0.0.0.0/0"],
+        //         },
+        //         // Add rules for port your application runs on
+        //     ],
+        // });
+        
 
-        publicSubnets.push(publicSubnetCIDR);
+        publicSubnets.push(publicSubnet.id);
 
-        privateSubnets.push(privateSubnetCIDR);
+        privateSubnets.push(privateSubnet.id);
 
         i=i+1;
 
     });
 
- 
+    const ec2SecurityGroup = new aws.ec2.SecurityGroup("my-ec2-security-group", {
+        vpcId: vpc.id, // Use the VPC created earlier
+        // Configure security group rules for ports 22, 80, 443, and your application port
+        ingress: [
+            {
+                fromPort: 22,
+                toPort: 22,
+                protocol: "tcp",
+                cidrBlocks: ["0.0.0.0/0"],
+            },
+            {
+                fromPort: 80,
+                toPort: 80,
+                protocol: "tcp",
+                cidrBlocks: ["0.0.0.0/0"],
+            },
+            {
+                fromPort: 8080,
+                toPort: 8080,
+                protocol: "tcp",
+                cidrBlocks: ["0.0.0.0/0"],
+            },
+            {
+                fromPort: 443,
+                toPort: 443,
+                protocol: "tcp",
+                cidrBlocks: ["0.0.0.0/0"],
+            },
+            // Add rules for port your application runs on
+        ],
+    });
+    
+    const ec2Instance = new aws.ec2.Instance("my-ec2-instance", {
+        instanceType: "t2.micro", // Use the desired instance type
+        vpc: vpc.id,
+        subnetId: publicSubnets[0],
+        ami: launchAMI,
+        keyName: keypair,
+        vpcSecurityGroupIds: [ec2SecurityGroup.id], // Attach the security group
+        // ... other EC2 instance settings ...
+        rootBlockDevice: {
+
+            volumeSize: 25,
+
+            volumeType: "gp2",
+            
+
+            deleteOnTermination: true,
+
+        },
+    });
+    
 
     console.log(publicSubnets, privateSubnets)
 
