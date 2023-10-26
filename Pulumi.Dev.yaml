@@ -4,7 +4,11 @@ config:
 
   aws:profile: manishk-dev
 
-  launchAMIID: "ami-0dab7286a65d6050c"
+  amiOwner: 341182795354
+
+  amiName: test123-20231025233158
+
+  #launchAMIID: "ami-0dab7286a65d6050c"
 
   cidrBlock: 10.25.0.0/16
 
