@@ -1,21 +1,17 @@
 encryptionsalt: v1:yBH+HwSX4SQ=:v1:NoKSkzZ+mIPeIJBK:9fctYQiovr1TuBqUJ8hTPJQUVcjFsg==
 config:
   aws:region: us-east-1
-
-  aws:profile: manishk-dev
-
-  amiOwner: 341182795354
-
-  amiName: test123-20231025233158
-
-  #launchAMIID: "ami-0dab7286a65d6050c"
-
+  aws:profile: manish_demo
   cidrBlock: 10.25.0.0/16
-
-  keyPairName: "KeyPair_1"
-
   publicCidrBlock: 0.0.0.0/0
-
+  amiOwner: 341182795354
+  amiName: test123-20231108225345
+  hostedZoneId: Z0969463SMLCGKXFUVJ7
+  domainName: demo.manishkandukuri.me
+  keypairName: "KeyPair_2"
+  rdsUsername: "csye6225"
+  rdsPassword: "root1234"
+  rdsdbName: "csye6225"
   tags:
 
     {Name : Created from Script}
