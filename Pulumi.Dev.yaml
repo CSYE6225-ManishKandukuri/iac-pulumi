@@ -1,17 +1,27 @@
 encryptionsalt: v1:yBH+HwSX4SQ=:v1:NoKSkzZ+mIPeIJBK:9fctYQiovr1TuBqUJ8hTPJQUVcjFsg==
 config:
-  aws:region: us-east-1
   aws:profile: manish_demo
-  cidrBlock: 10.25.0.0/16
-  publicCidrBlock: 0.0.0.0/0
-  amiOwner: 341182795354
-  amiName: test123-20231108225345
-  hostedZoneId: Z0969463SMLCGKXFUVJ7
-  domainName: demo.manishkandukuri.me
-  keypairName: "KeyPair_2"
-  rdsUsername: "csye6225"
-  rdsPassword: "root1234"
-  rdsdbName: "csye6225"
-  tags:
-
-    {Name : Created from Script}
+  aws:region: us-east-1
+  gcp:project: manishdemo-406605
+  gcp:region: us-east1
+  iac-pulumi:amiName: test123-20231129221109
+  iac-pulumi:amiOwner: "341182795354"
+  iac-pulumi:awsSESSMTPPassword:
+    secure: v1:jc2BfkzJ6olQOMG7:Sqy564jHwl54Mc1+R9kwMvkU4t/+C4A8mSwDd4MvfqxosdN1G4SnvMqbVXc8zqV79BTN2a9j7UtL5hTUG0OhgSDh
+  iac-pulumi:awsSESSMTPUser: postmaster@manishkandukuri.me
+  iac-pulumi:awsSESSMTPhost: "smtp.mailgun.org"
+  iac-pulumi:awsSNSRegion: us-east-1
+  iac-pulumi:awsSenderEmailAddress: no-reply.demo.manishkandukuri.me
+  iac-pulumi:awsccEmailAddress: m.maniish1@gmail.com
+  iac-pulumi:cidrBlock: 10.25.0.0/16
+  iac-pulumi:domainName: demo.manishkandukuri.me
+  iac-pulumi:gcpBucketRegion: us-east1
+  iac-pulumi:hostedZoneId: Z0969463SMLCGKXFUVJ7
+  iac-pulumi:keypairName: KeyPair_2
+  iac-pulumi:project: manishdemo-406605
+  iac-pulumi:publicCidrBlock: 0.0.0.0/0
+  iac-pulumi:rdsPassword: root1234
+  iac-pulumi:rdsUsername: csye6225
+  iac-pulumi:rdsdbName: csye6225
+  iac-pulumi:tags:
+    Name: Created from Script
