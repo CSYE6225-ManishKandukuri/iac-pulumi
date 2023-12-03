@@ -4,18 +4,10 @@ config:
   aws:region: us-east-1
   gcp:project: manishdemo-406605
   gcp:region: us-east1
-  iac-pulumi:amiName: test123-20231129221109
+  iac-pulumi:amiName: test123-20231202051038
   iac-pulumi:amiOwner: "341182795354"
-  iac-pulumi:awsSESSMTPPassword:
-    secure: v1:jc2BfkzJ6olQOMG7:Sqy564jHwl54Mc1+R9kwMvkU4t/+C4A8mSwDd4MvfqxosdN1G4SnvMqbVXc8zqV79BTN2a9j7UtL5hTUG0OhgSDh
-  iac-pulumi:awsSESSMTPUser: postmaster@manishkandukuri.me
-  iac-pulumi:awsSESSMTPhost: "smtp.mailgun.org"
-  iac-pulumi:awsSNSRegion: us-east-1
-  iac-pulumi:awsSenderEmailAddress: no-reply.demo.manishkandukuri.me
-  iac-pulumi:awsccEmailAddress: m.maniish1@gmail.com
   iac-pulumi:cidrBlock: 10.25.0.0/16
   iac-pulumi:domainName: demo.manishkandukuri.me
-  iac-pulumi:gcpBucketRegion: us-east1
   iac-pulumi:hostedZoneId: Z0969463SMLCGKXFUVJ7
   iac-pulumi:keypairName: KeyPair_2
   iac-pulumi:project: manishdemo-406605
@@ -23,5 +15,29 @@ config:
   iac-pulumi:rdsPassword: root1234
   iac-pulumi:rdsUsername: csye6225
   iac-pulumi:rdsdbName: csye6225
-  iac-pulumi:tags:
-    Name: Created from Script
+  iac-pulumi:bucketlocation: us-east1
+  iac-pulumi:awsSNSRegion: us-east-1
+  iac-pulumi:BUCKETNAME: "mybucket"
+  iac-pulumi:SMTPHOST: smtp.mailgun.org
+  iac-pulumi:SMTPUSER: postmaster@manishkandukuri.me
+  iac-pulumi:SMTPPASSWORD: 
+    secure: v1:jc2BfkzJ6olQOMG7:Sqy564jHwl54Mc1+R9kwMvkU4t/+C4A8mSwDd4MvfqxosdN1G4SnvMqbVXc8zqV79BTN2a9j7UtL5hTUG0OhgSDh
+  iac-pulumi:SENDEREMAIL: no-reply@manishkandukuri.me
+  iac-pulumi:CCEMAILLIST: ["m.maniish1@gmail.com", "kandukuri.m@northeastern.edu"]
+  iac-pulumi:SMTPPORT: 587
+  iac-pulumi:serviceaccountIDGCP: "lambdaserviceaccount"
+  iac-pulumi:PROJECTID: manishdemo-406605
+  iac-pulumi:snsTopicName: "lambda-notifications-service"
+  iac-pulumi:dynamoDBTableName: "emailtracktable"
+  iac-pulumi:lambdaIAMRoleCloudwatchPolicyARN: "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  iac-pulumi:lambdaIAMRoleDynamoDBPolicyARN: "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+  iac-pulumi:LAMBDAFUNCTIONNAME: "SERVERLESS"
+  iac-pulumi:lambdaFilePath: "serverless1.zip"
+  iac-pulumi:serviceaccountrole: "roles/storage.admin"
+  iac-pulumi:displayName: "lambdaserviceaccount"
+  iac-pulumi:privateKeyType: "TYPE_GOOGLE_CREDENTIALS_FILE"
+  iac-pulumi:AWSREGION: us-east-1
+  iac-pulumi:
+   tags:
+
+    {Name : Created from Script}
