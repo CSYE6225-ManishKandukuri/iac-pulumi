@@ -37,6 +37,7 @@ config:
   iac-pulumi:displayName: "lambdaserviceaccount"
   iac-pulumi:privateKeyType: "TYPE_GOOGLE_CREDENTIALS_FILE"
   iac-pulumi:AWSREGION: us-east-1
+  iac-pulumi:SSLcertificateARN: arn:aws:acm:us-east-1:684338525750:certificate/2c234702-b3da-4737-bea3-61fc7cb7a28a
   iac-pulumi:
    tags:
 

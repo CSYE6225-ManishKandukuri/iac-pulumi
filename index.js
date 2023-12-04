@@ -43,6 +43,8 @@ const lambdaFilePath = config.require('lambdaFilePath');
 const lambdaIAMRoleCloudwatchPolicyARN = config.require('lambdaIAMRoleCloudwatchPolicyARN');
 const lambdaIAMRoleDynamoDBPolicyARN = config.require('lambdaIAMRoleDynamoDBPolicyARN');
 const AWSREGION = config.require('AWSREGION');
+const SSLcertificateARN = config.require('SSLcertificateARN');
+
 
 const ArecordofDNS = "A";
 
@@ -504,6 +506,7 @@ aws.getAvailabilityZones({State :"available"}).then(availableZones => {
     echo "ARNSNSTOPIC=${topicsnsARN}" >> ${envFilePath}
     echo "AWS_SNS_REGION=${region}" >> ${envFilePath}
     echo "PORT=8087" >> ${envFilePath}
+    sudo systemctl restart webapp
     sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/amazon-cloudwatch-agent.json`;
     });
  
@@ -628,7 +631,10 @@ const appLoadBalancerListener = new aws.lb.Listener("appLoadBalancerListener", {
  
     //the Load Balancer Amazon Resource Name (ARN) is a unique identifier
     loadBalancerArn: appLoadBalancer.arn,
-    port: 80,
+    port: 443,
+    protocol: 'HTTPS',
+    sslPolicy: "ELBSecurityPolicy-TLS13-1-2-2021-06",
+    certificateArn: SSLcertificateARN,
     defaultActions: [{
         type: "forward",
  
@@ -777,7 +783,7 @@ exports.roleName = ec2Role.name;
 
 
 
-
+//devCert : arn:aws:acm:us-east-1:341182795354:certificate/b9038a87-7991-4da2-84fc-5ba17524cd1f
 
 
 
